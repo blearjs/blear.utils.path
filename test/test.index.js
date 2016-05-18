@@ -7,35 +7,34 @@
 
 'use strict';
 
-var querystring = require('../src/index.js');
+var path = require('../src/index.js');
 
 describe('index.js', function () {
-    it('.parse', function (done) {
-        expect(querystring.parse('a=1&c=5&b=2&c=3&d=4&c=6')).toEqual({
-            a: '1',
-            b: '2',
-            c: ['5', '3', '6'],
-            d: '4'
-        });
-
+    it('.normalize', function (done) {
+        expect(path.normalize('/')).toEqual('/');
+        expect(path.normalize('//')).toEqual('/');
+        expect(path.normalize('/./')).toEqual('/');
+        expect(path.normalize('/a/b/c/..')).toEqual('/a/b/');
+        expect(path.normalize('/a/b/c/.')).toEqual('/a/b/c/');
+        expect(path.normalize('/a/b/c/../d/')).toEqual('/a/b/d/');
+        expect(path.normalize('/a/b/c/./d/')).toEqual('/a/b/c/d/');
         done();
     });
 
-    it('.stringify', function (done) {
-        var ret = querystring.stringify({
-            a: '1',
-            b: '2',
-            c: ['5', '3', '6'],
-            d: '4',
-            e: function(){}
-        });
+    it('.isAbsolute', function () {
+        expect(path.isAbsolute('/')).toEqual(true);
+        expect(path.isAbsolute('./')).toEqual(false);
+    });
 
-        expect(ret).toMatch(/a=1/);
-        expect(ret).toMatch(/b=2/);
-        expect(ret).toMatch(/c=5&c=3&c=6/);
-        expect(ret).toMatch(/d=4/);
-        expect(ret).not.toMatch(/e=/);
+    it('.dirname', function () {
+        expect(path.dirname('/')).toEqual('/');
+        expect(path.dirname('./')).toEqual('./');
+        expect(path.dirname('./a/b/c')).toEqual('./a/b/');
+    });
 
-        done();
+    it('.join', function () {
+        expect(path.join('/', '/')).toEqual('/');
+        expect(path.join('./', '/')).toEqual('/');
+        expect(path.join('./a/b/c', '..')).toEqual('./a/');
     });
 });
