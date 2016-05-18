@@ -1,7 +1,7 @@
 {
   "name": "blear.utils.path",
-  "version": "1.0.0",
-  "description": "浏览器兼容性",
+  "version": "1.0.1",
+  "description": "path utils",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
     "test": "node ./node_modules/.bin/karma start --single-run --browsers PhantomJS --reporters progress"
@@ -14,6 +14,9 @@
   },
   "main": "src/index.js",
   "keywords": [
+    "blear",
+    "utils",
+    "path",
     "cloudcome",
     "ydr.me"
   ],
