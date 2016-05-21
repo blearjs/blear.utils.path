@@ -80,7 +80,7 @@ var isAbsolute = exports.isAbsolute = function (path) {
  */
 var dirname = exports.dirname = function (path) {
     if (!rePathSep.test(path)) {
-        return path + '/';
+        return '/';
     }
 
     path += reEndWidthSlash.test(path) ? '' : '/../';
@@ -97,11 +97,6 @@ var dirname = exports.dirname = function (path) {
 exports.join = function (from, to) {
     from = normalize(from);
     to = normalize(to);
-
-    // 无 to
-    if (!to) {
-        return from;
-    }
 
     // 如果 to 为绝对，则直接返回
     if (isAbsolute(to)) {
