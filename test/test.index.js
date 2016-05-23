@@ -22,9 +22,28 @@ describe('index.js', function () {
         done();
     });
 
+    it('.isStatic', function () {
+        expect(path.isStatic('ss://')).toEqual(true);
+        expect(path.isStatic('//')).toEqual(true);
+        expect(path.isStatic('/')).toEqual(false);
+        expect(path.isStatic('./')).toEqual(false);
+        expect(path.isStatic('a')).toEqual(false);
+    });
+
     it('.isAbsolute', function () {
+        expect(path.isAbsolute('ss://')).toEqual(false);
+        expect(path.isAbsolute('//')).toEqual(false);
         expect(path.isAbsolute('/')).toEqual(true);
         expect(path.isAbsolute('./')).toEqual(false);
+        expect(path.isAbsolute('a')).toEqual(false);
+    });
+
+    it('.isRelative', function () {
+        expect(path.isRelative('ss://')).toEqual(false);
+        expect(path.isRelative('//')).toEqual(false);
+        expect(path.isRelative('/')).toEqual(false);
+        expect(path.isRelative('./')).toEqual(true);
+        expect(path.isRelative('a')).toEqual(true);
     });
 
     it('.dirname', function () {

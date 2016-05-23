@@ -9,6 +9,7 @@ var reStartWidthSlash = /^\//;
 var reEndWidthSlash = /\/$/;
 var reMoreSlash = /\/{2,}/;
 var reEndThis = /\/.$/;
+var reStaticPath = /^([a-z\d_-]+:)?\/\//i;
 var reAbsolutePath = /^\//;
 var THIS_PATH_FLAG = '.';
 var LAST_PATH_FLAG = '..';
@@ -65,12 +66,32 @@ var normalize = exports.normalize = function (path) {
 
 
 /**
+ * 是否为静态路径
+ * @type {Function}
+ * @return {Boolean}
+ */
+var isStatic = exports.isStatic = function (path) {
+    return reStaticPath.test(path);
+};
+
+
+/**
  * 是否为绝对路径
  * @type {Function}
  * @return {Boolean}
  */
 var isAbsolute = exports.isAbsolute = function (path) {
-    return reAbsolutePath.test(path);
+    return !isStatic(path) && reAbsolutePath.test(path);
+};
+
+
+/**
+ * 是否为相对路径
+ * @type {Function}
+ * @return {Boolean}
+ */
+var isRelative = exports.isRelative = function (path) {
+    return !isStatic(path) && !isAbsolute(path);
 };
 
 
