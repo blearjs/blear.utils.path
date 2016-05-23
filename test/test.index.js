@@ -56,6 +56,8 @@ describe('index.js', function () {
     it('.join', function () {
         expect(path.join('/', '/')).toEqual('/');
         expect(path.join('./', '/')).toEqual('/');
-        expect(path.join('./a/b/c', '..')).toEqual('./a/');
+        expect(path.join('./a/b/c', '..')).toEqual('./a/b/');
+        expect(path.join('./a/b/c', '..', './b')).toEqual('./a/b/b');
+        expect(path.join('./a/b/c', '..', './b', 'c')).toEqual('./a/b/b/c');
     });
 });

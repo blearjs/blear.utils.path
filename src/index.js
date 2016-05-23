@@ -1,6 +1,7 @@
 'use strict';
 
 var array = require('blear.utils.array');
+var access = require('blear.utils.access');
 
 var rePathQuerystringHashstring = /[?#].*$/;
 var reThisPath = /\/\.\//g;
@@ -8,7 +9,7 @@ var rePathSep = /\//;
 var reStartWidthSlash = /^\//;
 var reEndWidthSlash = /\/$/;
 var reMoreSlash = /\/{2,}/;
-var reEndThis = /\/.$/;
+var reEndThis = /\/\.$/;
 var reStaticPath = /^([a-z\d_-]+:)?\/\//i;
 var reAbsolutePath = /^\//;
 var THIS_PATH_FLAG = '.';
@@ -115,16 +116,35 @@ var dirname = exports.dirname = function (path) {
  * @param to {String} 目标路径
  * @returns {String}
  */
-exports.join = function (from, to) {
+var resolve = function (from, to) {
     from = normalize(from);
     to = normalize(to);
 
-    // 如果 to 为绝对，则直接返回
-    if (isAbsolute(to)) {
+    if (isStatic(to) || isAbsolute(to)) {
         return to;
     }
 
-    var fromDirname = dirname(from);
+    from += reEndWidthSlash.test(from) ? '' : '/';
+    return normalize(from + to);
+};
 
-    return normalize(fromDirname + to);
+
+/**
+ * 合并路径
+ * @param from {String} 起始路径
+ * @param to {String} 目标路径
+ * @returns {String}
+ */
+exports.join = function (from, to/*arguments*/) {
+    var args = access.args(arguments);
+    var current = 1;
+    var end = args.length;
+    var ret = args[0];
+
+    while (current < end) {
+        ret = resolve(ret, args[current]);
+        current++;
+    }
+
+    return ret;
 };
