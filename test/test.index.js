@@ -53,11 +53,22 @@ describe('index.js', function () {
         expect(path.dirname('./a/b/c')).toEqual('./a/b/');
     });
 
+    it('.resolve', function () {
+        expect(path.resolve('/', '/')).toEqual('/');
+        expect(path.resolve('./', '/')).toEqual('/');
+        expect(path.resolve('/a/b/c/', '/d/e/f/')).toEqual('/d/e/f/');
+        expect(path.resolve('./a/b/c', '..')).toEqual('./a/b/');
+        expect(path.resolve('./a/b/c', '..', './b')).toEqual('./a/b/b');
+        expect(path.resolve('./a/b/c', '..', './b', '/c')).toEqual('/c');
+    });
+
     it('.join', function () {
         expect(path.join('/', '/')).toEqual('/');
-        expect(path.join('./', '/')).toEqual('/');
+        expect(path.join('./', '/')).toEqual('./');
+        expect(path.join('/a/b/c/', '/d/e/f/')).toEqual('/a/b/c/d/e/f/');
         expect(path.join('./a/b/c', '..')).toEqual('./a/b/');
         expect(path.join('./a/b/c', '..', './b')).toEqual('./a/b/b');
         expect(path.join('./a/b/c', '..', './b', 'c')).toEqual('./a/b/b/c');
+        expect(path.join('./a/b/c', '..', './b', '/c')).toEqual('./a/b/b/c');
     });
 });

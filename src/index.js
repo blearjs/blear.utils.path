@@ -111,22 +111,48 @@ var dirname = exports.dirname = function (path) {
 
 
 /**
- * 合并路径
+ * 解决路径
  * @param from {String} 起始路径
  * @param to {String} 目标路径
+ * @param ignore {Boolean} 是否忽略绝对路径
  * @returns {String}
  */
-var resolve = function (from, to) {
+var resolve = function (from, to, ignore) {
     from = normalize(from);
     to = normalize(to);
 
-    if (isStatic(to) || isAbsolute(to)) {
+    if (!ignore && (isStatic(to) || isAbsolute(to))) {
         return to;
     }
 
     from += reEndWidthSlash.test(from) ? '' : '/';
     return normalize(from + to);
 };
+
+
+
+
+
+/**
+ * 解决路径
+ * @param from {String} 起始路径
+ * @param to {String} 目标路径
+ * @returns {String}
+ */
+exports.resolve = function (from, to/*arguments*/) {
+    var args = access.args(arguments);
+    var current = 1;
+    var end = args.length;
+    var ret = args[0];
+
+    while (current < end) {
+        ret = resolve(ret, args[current], false);
+        current++;
+    }
+
+    return ret;
+};
+
 
 
 /**
@@ -142,7 +168,7 @@ exports.join = function (from, to/*arguments*/) {
     var ret = args[0];
 
     while (current < end) {
-        ret = resolve(ret, args[current]);
+        ret = resolve(ret, args[current], true);
         current++;
     }
 
