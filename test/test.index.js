@@ -51,6 +51,7 @@ describe('index.js', function () {
         expect(path.dirname('/')).toEqual('/');
         expect(path.dirname('./')).toEqual('./');
         expect(path.dirname('./a/b/c')).toEqual('./a/b/');
+        expect(path.dirname('./a/b/c/')).toEqual('./a/b/c/');
     });
 
     it('.resolve', function () {
