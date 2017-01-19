@@ -24,6 +24,9 @@ describe('index.js', function () {
 
     it('.isStatic', function () {
         expect(path.isStatic('ss://')).toEqual(true);
+        expect(path.isStatic('ss:bac')).toEqual(true);
+        expect(path.isStatic('mailto:bac')).toEqual(true);
+        expect(path.isStatic('tel:188')).toEqual(true);
         expect(path.isStatic('//')).toEqual(true);
         expect(path.isStatic('/')).toEqual(false);
         expect(path.isStatic('./')).toEqual(false);

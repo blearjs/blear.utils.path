@@ -10,6 +10,8 @@ var reStartWidthSlash = /^\//;
 var reEndWidthSlash = /\/$/;
 var reMoreSlash = /\/{2,}/;
 var reEndThis = /\/\.$/;
+var clearProtocolStartRE = /^.+:/;
+var autoProtocolStartRE = /^\/\//;
 var reStaticPath = /^([a-z\d_-]+:)?\/\//i;
 var reAbsolutePath = /^\//;
 var THIS_PATH_FLAG = '.';
@@ -72,7 +74,7 @@ var normalize = exports.normalize = function (path) {
  * @return {Boolean}
  */
 var isStatic = exports.isStatic = function (path) {
-    return reStaticPath.test(path);
+    return clearProtocolStartRE.test(path) || autoProtocolStartRE.test(path);
 };
 
 
