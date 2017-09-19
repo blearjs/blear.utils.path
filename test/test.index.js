@@ -15,10 +15,13 @@ describe('index.js', function () {
         expect(path.normalize('/a/..')).toEqual('/');
         expect(path.normalize('//')).toEqual('/');
         expect(path.normalize('/./')).toEqual('/');
-        expect(path.normalize('/a/b/c/..')).toEqual('/a/b/');
+        expect(path.normalize('/a/b/c/..')).toEqual('/a/b');
+        expect(path.normalize('/a/b/c/../')).toEqual('/a/b/');
         expect(path.normalize('/a/b/c/.')).toEqual('/a/b/c/');
         expect(path.normalize('/a/b/c/../d/')).toEqual('/a/b/d/');
         expect(path.normalize('/a/b/c/./d/')).toEqual('/a/b/c/d/');
+        expect(path.normalize('/a/b/c/./d')).toEqual('/a/b/c/d');
+        expect(path.normalize('/a/b/c/../d/e')).toEqual('/a/b/d/e');
         done();
     });
 
@@ -61,16 +64,19 @@ describe('index.js', function () {
         expect(path.resolve('/', '/')).toEqual('/');
         expect(path.resolve('./', '/')).toEqual('/');
         expect(path.resolve('/a/b/c/', '/d/e/f/')).toEqual('/d/e/f/');
-        expect(path.resolve('./a/b/c', '..')).toEqual('./a/b/');
+        expect(path.resolve('./a/b/c', '..')).toEqual('./a/b');
+        expect(path.resolve('./a/b/c', '../')).toEqual('./a/b/');
         expect(path.resolve('./a/b/c', '..', './b')).toEqual('./a/b/b');
         expect(path.resolve('./a/b/c', '..', './b', '/c')).toEqual('/c');
+        expect(path.resolve('/a/b/c/', '../d/e')).toEqual('/a/b/d/e');
     });
 
     it('.join', function () {
         expect(path.join('/', '/')).toEqual('/');
         expect(path.join('./', '/')).toEqual('./');
         expect(path.join('/a/b/c/', '/d/e/f/')).toEqual('/a/b/c/d/e/f/');
-        expect(path.join('./a/b/c', '..')).toEqual('./a/b/');
+        expect(path.join('./a/b/c', '..')).toEqual('./a/b');
+        expect(path.join('./a/b/c', '../')).toEqual('./a/b/');
         expect(path.join('./a/b/c', '..', './b')).toEqual('./a/b/b');
         expect(path.join('./a/b/c', '..', './b', 'c')).toEqual('./a/b/b/c');
         expect(path.join('./a/b/c', '..', './b', '/c')).toEqual('./a/b/b/c');

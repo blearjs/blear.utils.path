@@ -43,7 +43,6 @@ var normalize = exports.normalize = function (path) {
 
     array.each(pathList, function (index, item) {
         if (item === LAST_PATH_FLAG && lastItem && lastItem !== LAST_PATH_FLAG) {
-            endWidthSlash = true;
             pathList2.pop();
         } else {
             pathList2.push(item);
