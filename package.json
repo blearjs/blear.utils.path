@@ -1,6 +1,6 @@
 {
   "name": "blear.utils.path",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "path utils",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",

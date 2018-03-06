@@ -22,6 +22,11 @@ describe('index.js', function () {
         expect(path.normalize('/a/b/c/./d/')).toEqual('/a/b/c/d/');
         expect(path.normalize('/a/b/c/./d')).toEqual('/a/b/c/d');
         expect(path.normalize('/a/b/c/../d/e')).toEqual('/a/b/d/e');
+        expect(path.normalize('/a/b/c/../../d/e')).toEqual('/a/d/e');
+        expect(path.normalize('../a/b/c/../../d/e')).toEqual('../a/d/e');
+        expect(path.normalize('./a/b/c/../../d/e')).toEqual('./a/d/e');
+        expect(path.normalize('./a/../b/c/../../d/e')).toEqual('./d/e');
+        expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('./d');
         done();
     });
 
@@ -69,6 +74,7 @@ describe('index.js', function () {
         expect(path.resolve('./a/b/c', '..', './b')).toEqual('./a/b/b');
         expect(path.resolve('./a/b/c', '..', './b', '/c')).toEqual('/c');
         expect(path.resolve('/a/b/c/', '../d/e')).toEqual('/a/b/d/e');
+        expect(path.resolve('/a/b/c/', '../../d')).toEqual('/a/d');
     });
 
     it('.join', function () {

@@ -35,20 +35,17 @@ var normalize = exports.normalize = function (path) {
         .replace(reEndThis, '/');
 
     var pathList = path.split(rePathSep);
-    var lastItem = '';
     var pathList2 = [];
     var slashFlag = '/';
     var startWidthSlash = reStartWidthSlash.test(path);
     var endWidthSlash = reEndWidthSlash.test(path);
+    var lastItem = '';
 
     array.each(pathList, function (index, item) {
         if (item === LAST_PATH_FLAG && lastItem && lastItem !== LAST_PATH_FLAG) {
             pathList2.pop();
         } else {
             pathList2.push(item);
-        }
-
-        if (index) {
             lastItem = item;
         }
     });
@@ -131,9 +128,6 @@ var resolve = function (from, to, ignore) {
 };
 
 
-
-
-
 /**
  * 解决路径
  * @param from {String} 起始路径
@@ -153,7 +147,6 @@ exports.resolve = function (from, to/*arguments*/) {
 
     return ret;
 };
-
 
 
 /**
