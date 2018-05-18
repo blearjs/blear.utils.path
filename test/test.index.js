@@ -27,6 +27,7 @@ describe('index.js', function () {
         expect(path.normalize('./a/b/c/../../d/e')).toEqual('./a/d/e');
         expect(path.normalize('./a/../b/c/../../d/e')).toEqual('./d/e');
         expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('./d');
+        expect(path.normalize('././././d')).toEqual('./d');
         done();
     });
 
@@ -86,5 +87,12 @@ describe('index.js', function () {
         expect(path.join('./a/b/c', '..', './b')).toEqual('./a/b/b');
         expect(path.join('./a/b/c', '..', './b', 'c')).toEqual('./a/b/b/c');
         expect(path.join('./a/b/c', '..', './b', '/c')).toEqual('./a/b/b/c');
+    });
+
+    it('.relative', function () {
+        expect(path.relative('/', '/a/b/c')).toEqual('./a/b/c');
+        expect(path.relative('/a', '/a/b/c')).toEqual('./b/c');
+        expect(path.relative('/a/b/c', '/a/b/d')).toEqual('./d');
+        expect(path.relative('/a/b/c', '/a/b')).toEqual('../');
     });
 });
