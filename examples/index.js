@@ -15,5 +15,7 @@ document.getElementById('normalize').onclick = function () {
     document.getElementById('path2').value = path.normalize(path1);
 };
 
+window.path = path;
+
 console.log(path.relative('/a/b/c/d', 'o/p/q/r'));
 
