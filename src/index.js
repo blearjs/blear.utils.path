@@ -5,6 +5,7 @@ var access = require('blear.utils.access');
 
 var rePathQuerystringHashstring = /[?#].*$/;
 var reThisPath = /\/\.\//g;
+var reThisLastPath = /\.\/\.\.(\/|$)/g;
 var rePathSep = /\//;
 var reStartWidthSlash = /^\//;
 var reEndWidthSlash = /\/$/;
@@ -26,44 +27,43 @@ var LAST_PATH_FLAG = '..';
 var normalize = exports.normalize = function (path) {
     path = path
     // 去掉 query、hash
-        .replace(rePathQuerystringHashstring, '')
-        // 去掉 /{2,}
-        .replace(reMoreSlash, '/')
-        // 去掉 ./
-        .replace(reThisPath, '/')
-        // 这里执行两次
-        // ././././d => ././d => ./d
-        .replace(reThisPath, '/')
-        // 去掉末尾 /.
-        .replace(reEndThis, '/');
-
-    var pathList = path.split(rePathSep);
+        .replace(/[?#].*$/, '')
+        // 转换 \ 为 /
+        .replace(/\\/g, '/')
+        // 替换 //// => /
+        .replace(/\/{2,}/g, '/');
+    var pathList1 = path.split(/\//);
     var pathList2 = [];
-    var slashFlag = '/';
-    var startWidthSlash = reStartWidthSlash.test(path);
-    var endWidthSlash = reEndWidthSlash.test(path);
-    var lastItem = '';
 
-    array.each(pathList, function (index, item) {
-        if (item === LAST_PATH_FLAG && lastItem && lastItem !== LAST_PATH_FLAG) {
-            pathList2.pop();
-        } else {
-            pathList2.push(item);
-            lastItem = item;
+    array.each(pathList1, function (_, item) {
+        var index = pathList2.length - 1;
+        var prev = pathList2[index];
+
+        switch (item) {
+            case '.':
+                if (index === -1) {
+                    pathList2.push(item);
+                }
+                return;
+
+            case '..':
+                if (!prev || prev === '..') {
+                    pathList2.push(item);
+                } else {
+                    pathList2.pop();
+                }
+                break;
+
+            default:
+                pathList2.push(item);
         }
     });
 
-    path = pathList2.join(slashFlag);
-
-    if (startWidthSlash && !reStartWidthSlash.test(path)) {
-        path = slashFlag + path;
+    if (pathList2.length === 1 && pathList2[0] === '') {
+        return '/';
     }
 
-    if (endWidthSlash && !reEndWidthSlash.test(path)) {
-        path += slashFlag;
-    }
-
-    return path;
+    return pathList2.join('/');
 };
 
 
@@ -163,6 +163,10 @@ var relative = function (from, to) {
             }
         }
     });
+
+    while (pathList.length < fromStacks.length) {
+        pathList.push('..');
+    }
 
     return normalize(pathList.join('/'));
 };

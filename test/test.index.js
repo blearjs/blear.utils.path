@@ -17,7 +17,7 @@ describe('index.js', function () {
         expect(path.normalize('/./')).toEqual('/');
         expect(path.normalize('/a/b/c/..')).toEqual('/a/b');
         expect(path.normalize('/a/b/c/../')).toEqual('/a/b/');
-        expect(path.normalize('/a/b/c/.')).toEqual('/a/b/c/');
+        expect(path.normalize('/a/b/c/.')).toEqual('/a/b/c');
         expect(path.normalize('/a/b/c/../d/')).toEqual('/a/b/d/');
         expect(path.normalize('/a/b/c/./d/')).toEqual('/a/b/c/d/');
         expect(path.normalize('/a/b/c/./d')).toEqual('/a/b/c/d');
