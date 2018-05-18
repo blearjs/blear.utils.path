@@ -3,20 +3,13 @@
 var array = require('blear.utils.array');
 var access = require('blear.utils.access');
 
-var rePathQuerystringHashstring = /[?#].*$/;
-var reThisPath = /\/\.\//g;
-var reThisLastPath = /\.\/\.\.(\/|$)/g;
-var rePathSep = /\//;
-var reStartWidthSlash = /^\//;
-var reEndWidthSlash = /\/$/;
-var reMoreSlash = /\/{2,}/;
-var reEndThis = /\/\.$/;
+var pathSeperatorRE = /\//;
+var endWidthSlashRE = /\/$/;
 var clearProtocolStartRE = /^.+:/;
 var autoProtocolStartRE = /^\/\//;
-var reStaticPath = /^([a-z\d_-]+:)?\/\//i;
-var reAbsolutePath = /^\//;
-var THIS_PATH_FLAG = '.';
-var LAST_PATH_FLAG = '..';
+var absolutePathRE = /^\//;
+var DOT_ONCE = '.';
+var DOT_TWICE = '..';
 
 
 /**
@@ -32,7 +25,7 @@ var normalize = exports.normalize = function (path) {
         .replace(/\\/g, '/')
         // 替换 //// => /
         .replace(/\/{2,}/g, '/');
-    var pathList1 = path.split(/\//);
+    var pathList1 = path.split(pathSeperatorRE);
     var pathList2 = [];
 
     array.each(pathList1, function (_, item) {
@@ -40,14 +33,11 @@ var normalize = exports.normalize = function (path) {
         var prev = pathList2[index];
 
         switch (item) {
-            case '.':
-                if (index === -1) {
-                    pathList2.push(item);
-                }
+            case DOT_ONCE:
                 return;
 
-            case '..':
-                if (!prev || prev === '..') {
+            case DOT_TWICE:
+                if (!prev || prev === DOT_ONCE || prev === DOT_TWICE) {
                     pathList2.push(item);
                 } else {
                     pathList2.pop();
@@ -83,7 +73,7 @@ var isStatic = exports.isStatic = function (path) {
  * @return {Boolean}
  */
 var isAbsolute = exports.isAbsolute = function (path) {
-    return !isStatic(path) && reAbsolutePath.test(path);
+    return !isStatic(path) && absolutePathRE.test(path);
 };
 
 
@@ -102,11 +92,11 @@ var isRelative = exports.isRelative = function (path) {
  * @param path
  */
 var dirname = exports.dirname = function (path) {
-    if (!rePathSep.test(path)) {
+    if (!pathSeperatorRE.test(path)) {
         return '/';
     }
 
-    path += reEndWidthSlash.test(path) ? '' : '/../';
+    path += endWidthSlashRE.test(path) ? '' : '/../';
     return normalize(path);
 };
 
@@ -126,7 +116,7 @@ var resolve = function (from, to, ignore) {
         return to;
     }
 
-    from += reEndWidthSlash.test(from) ? '' : '/';
+    from += endWidthSlashRE.test(from) ? '' : '/';
     return normalize(from + to);
 };
 
@@ -134,8 +124,8 @@ var relative = function (from, to) {
     from = normalize(from);
     to = normalize(to);
 
-    var fromStacks = from.split(rePathSep);
-    var toStacks = to.split(rePathSep);
+    var fromStacks = from.split(pathSeperatorRE);
+    var toStacks = to.split(pathSeperatorRE);
     var inRelative = false;
     var pathList = [];
 

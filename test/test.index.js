@@ -24,10 +24,11 @@ describe('index.js', function () {
         expect(path.normalize('/a/b/c/../d/e')).toEqual('/a/b/d/e');
         expect(path.normalize('/a/b/c/../../d/e')).toEqual('/a/d/e');
         expect(path.normalize('../a/b/c/../../d/e')).toEqual('../a/d/e');
-        expect(path.normalize('./a/b/c/../../d/e')).toEqual('./a/d/e');
-        expect(path.normalize('./a/../b/c/../../d/e')).toEqual('./d/e');
-        expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('./d');
-        expect(path.normalize('././././d')).toEqual('./d');
+        expect(path.normalize('./a/b/c/../../d/e')).toEqual('a/d/e');
+        expect(path.normalize('./a/../b/c/../../d/e')).toEqual('d/e');
+        expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('d');
+        expect(path.normalize('././././d')).toEqual('d');
+        expect(path.normalize('a/')).toEqual('a/');
         done();
     });
 

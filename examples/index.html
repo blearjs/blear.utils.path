@@ -18,42 +18,10 @@
 <input type="text" id="path2" value="">
 <button id="normalize">normalize</button>
 
+
+<script src="/node_modules/coolie.js/coolie.js" data-config="/examples/coolie-config.js" data-main="index.js"></script>
+
 <script>
 
-    document.getElementById('normalize').onclick = function () {
-        var path1 = document.getElementById('path1').value;
-        path1 = path1.replace(/\\/g, '/').replace(/\/{2,}/g, '/');
-        var pathList = path1.split(/\//);
-        var pathList2 = [];
 
-        pathList.forEach(function (item) {
-            var index = pathList2.length - 1;
-            var prev = pathList2[index];
-
-            switch (item) {
-                case '.':
-                    if (index === -1) {
-                        pathList2.push(item);
-                    }
-                    return;
-
-                case '..':
-                    if (!prev || prev === '..') {
-                        pathList2.push(item);
-                    } else {
-                        pathList2.pop();
-                    }
-                    break;
-
-                default:
-                    pathList2.push(item);
-            }
-        });
-
-        if (pathList2.length === 1 && pathList2[0] === '') {
-            pathList2.push('');
-        }
-
-        document.getElementById('path2').value = pathList2.join('/');
-    };
 </script>
