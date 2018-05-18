@@ -102,7 +102,13 @@ describe('blear.utils.path', function () {
     it('.relative', function () {
         expect(path.relative('/', '/a/b/c')).toEqual('./a/b/c');
         expect(path.relative('/a', '/a/b/c')).toEqual('./b/c');
-        expect(path.relative('/a/b/c', '/a/b/d')).toEqual('./d');
+        expect(path.relative('/a/b/c', '/a/b/d')).toEqual('../d');
         expect(path.relative('/a/b/c', '/a/b')).toEqual('..');
+        expect(path.relative('/a/b/c/d', '/a/b/c/d')).toEqual('.');
+        expect(path.relative('/a/b/c/d', '/a/b/c')).toEqual('..');
+        expect(path.relative('/a/b/c/d', '/a/b')).toEqual('../..');
+        expect(path.relative('/a/b/c/d', '/a/b/e')).toEqual('../../e');
+        expect(path.relative('/a/b/c/d', '/a/b/e/f')).toEqual('../../e/f');
+        expect(path.relative('/a/b/c/d', '/x/y/z/w')).toEqual('../../../../x/y/z/w');
     });
 });

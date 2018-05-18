@@ -30,9 +30,7 @@ var normalize = exports.normalize = function (path) {
         .replace(/\/{2,}/g, PATH_SEPARATOR);
     var pathList1 = path.split(pathSeperatorRE);
     var pathList2 = [];
-    var startWidthPointOnce = startWidthPointOnceRE.test(path);
     var startWidthSlash = startWidthSlashRE.test(path);
-    var endWidthSlash = endWidthSlashRE.test(path);
 
     array.each(pathList1, function (_, item) {
         var index = pathList2.length - 1;
@@ -147,6 +145,7 @@ var relative = function (from, to) {
     var fromStacks = from.split(pathSeperatorRE);
     var toStacks = to.split(pathSeperatorRE);
     var inRelative = false;
+    var steps = 0;
     var pathList = [];
 
     array.each(toStacks, function (index, toItem) {
@@ -155,10 +154,10 @@ var relative = function (from, to) {
         // 已确定相对关系
         if (inRelative) {
             if (fromItem) {
-                pathList.push(DOT_TWICE);
-            } else {
-                pathList.push(toItem);
+                pathList.unshift(DOT_TWICE);
             }
+
+            pathList.push(toItem);
         }
         // 未确定相对关系
         else {
@@ -169,13 +168,21 @@ var relative = function (from, to) {
             // 路点不同
             else {
                 inRelative = true;
+
+                if (fromItem) {
+                    pathList.unshift(DOT_TWICE);
+                }
+
                 pathList.push(toItem);
             }
         }
+
+        steps++;
     });
 
-    while (pathList.length < fromStacks.length) {
-        pathList.push(DOT_TWICE);
+    while (steps < fromStacks.length) {
+        pathList.unshift(DOT_TWICE);
+        steps++;
     }
 
     return normalize(pathList.join(PATH_SEPARATOR));
