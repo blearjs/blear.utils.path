@@ -4,10 +4,13 @@ var array = require('blear.utils.array');
 var access = require('blear.utils.access');
 
 var pathSeperatorRE = /\//;
+var startWidthPointOnceRE = /^\.\//;
+var startWidthSlashRE = /^\//;
 var endWidthSlashRE = /\/$/;
 var clearProtocolStartRE = /^.+:/;
 var autoProtocolStartRE = /^\/\//;
 var absolutePathRE = /^\//;
+var PATH_SEPARATOR = '/';
 var DOT_ONCE = '.';
 var DOT_TWICE = '..';
 
@@ -22,11 +25,14 @@ var normalize = exports.normalize = function (path) {
     // 去掉 query、hash
         .replace(/[?#].*$/, '')
         // 转换 \ 为 /
-        .replace(/\\/g, '/')
+        .replace(/\\/g, PATH_SEPARATOR)
         // 替换 //// => /
-        .replace(/\/{2,}/g, '/');
+        .replace(/\/{2,}/g, PATH_SEPARATOR);
     var pathList1 = path.split(pathSeperatorRE);
     var pathList2 = [];
+    var startWidthPointOnce = startWidthPointOnceRE.test(path);
+    var startWidthSlash = startWidthSlashRE.test(path);
+    var endWidthSlash = endWidthSlashRE.test(path);
 
     array.each(pathList1, function (_, item) {
         var index = pathList2.length - 1;
@@ -34,11 +40,18 @@ var normalize = exports.normalize = function (path) {
 
         switch (item) {
             case DOT_ONCE:
+                if (index === -1) {
+                    pathList2.push(DOT_ONCE);
+                }
                 return;
 
             case DOT_TWICE:
                 if (!prev || prev === DOT_ONCE || prev === DOT_TWICE) {
-                    pathList2.push(item);
+                    if (prev === DOT_ONCE) {
+                        pathList2.pop();
+                    }
+
+                    pathList2.push(DOT_TWICE);
                 } else {
                     pathList2.pop();
                 }
@@ -49,11 +62,11 @@ var normalize = exports.normalize = function (path) {
         }
     });
 
-    if (pathList2.length === 1 && pathList2[0] === '') {
-        return '/';
+    if (startWidthSlash && pathList2.length === 1 && pathList2[0] === '') {
+        pathList2.push('');
     }
 
-    return pathList2.join('/');
+    return pathList2.join(PATH_SEPARATOR);
 };
 
 
@@ -93,7 +106,7 @@ var isRelative = exports.isRelative = function (path) {
  */
 var dirname = exports.dirname = function (path) {
     if (!pathSeperatorRE.test(path)) {
-        return '/';
+        return PATH_SEPARATOR;
     }
 
     path += endWidthSlashRE.test(path) ? '' : '/../';
@@ -116,10 +129,17 @@ var resolve = function (from, to, ignore) {
         return to;
     }
 
-    from += endWidthSlashRE.test(from) ? '' : '/';
+    from += endWidthSlashRE.test(from) ? '' : PATH_SEPARATOR;
     return normalize(from + to);
 };
 
+
+/**
+ * 路径相对
+ * @param from
+ * @param to
+ * @returns {string}
+ */
 var relative = function (from, to) {
     from = normalize(from);
     to = normalize(to);
@@ -135,7 +155,7 @@ var relative = function (from, to) {
         // 已确定相对关系
         if (inRelative) {
             if (fromItem) {
-                pathList.push('..');
+                pathList.push(DOT_TWICE);
             } else {
                 pathList.push(toItem);
             }
@@ -144,7 +164,7 @@ var relative = function (from, to) {
         else {
             // 路点相同
             if (fromItem === toItem) {
-                pathList.push('.');
+                pathList.push(DOT_ONCE);
             }
             // 路点不同
             else {
@@ -155,10 +175,10 @@ var relative = function (from, to) {
     });
 
     while (pathList.length < fromStacks.length) {
-        pathList.push('..');
+        pathList.push(DOT_TWICE);
     }
 
-    return normalize(pathList.join('/'));
+    return normalize(pathList.join(PATH_SEPARATOR));
 };
 
 

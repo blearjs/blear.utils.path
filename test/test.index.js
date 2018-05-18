@@ -9,10 +9,15 @@
 
 var path = require('../src/index.js');
 
-describe('index.js', function () {
-    it('.normalize', function (done) {
+describe('blear.utils.path', function () {
+    it('.normalize', function () {
         expect(path.normalize('/')).toEqual('/');
         expect(path.normalize('/a/..')).toEqual('/');
+        expect(path.normalize('/a/../')).toEqual('/');
+        expect(path.normalize('./a/..')).toEqual('.');
+        expect(path.normalize('./a/../')).toEqual('./');
+        expect(path.normalize('../a/..')).toEqual('..');
+        expect(path.normalize('../a/../')).toEqual('../');
         expect(path.normalize('//')).toEqual('/');
         expect(path.normalize('/./')).toEqual('/');
         expect(path.normalize('/a/b/c/..')).toEqual('/a/b');
@@ -24,12 +29,15 @@ describe('index.js', function () {
         expect(path.normalize('/a/b/c/../d/e')).toEqual('/a/b/d/e');
         expect(path.normalize('/a/b/c/../../d/e')).toEqual('/a/d/e');
         expect(path.normalize('../a/b/c/../../d/e')).toEqual('../a/d/e');
-        expect(path.normalize('./a/b/c/../../d/e')).toEqual('a/d/e');
-        expect(path.normalize('./a/../b/c/../../d/e')).toEqual('d/e');
-        expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('d');
-        expect(path.normalize('././././d')).toEqual('d');
+        expect(path.normalize('./a/b/c/../../d/e')).toEqual('./a/d/e');
+        expect(path.normalize('./a/../b/c/../../d/e')).toEqual('./d/e');
+        expect(path.normalize('./a/../b/c/../../d/e/..')).toEqual('./d');
+        expect(path.normalize('././././d')).toEqual('./d');
         expect(path.normalize('a/')).toEqual('a/');
-        done();
+        expect(path.normalize('./..')).toEqual('..');
+        expect(path.normalize('./../')).toEqual('../');
+        expect(path.normalize('../.')).toEqual('..');
+        expect(path.normalize('.././')).toEqual('../');
     });
 
     it('.isStatic', function () {
@@ -63,6 +71,7 @@ describe('index.js', function () {
         expect(path.dirname('a')).toEqual('/');
         expect(path.dirname('/')).toEqual('/');
         expect(path.dirname('./')).toEqual('./');
+        expect(path.dirname('a/b/c')).toEqual('a/b/');
         expect(path.dirname('./a/b/c')).toEqual('./a/b/');
         expect(path.dirname('./a/b/c/')).toEqual('./a/b/c/');
     });
@@ -94,6 +103,6 @@ describe('index.js', function () {
         expect(path.relative('/', '/a/b/c')).toEqual('./a/b/c');
         expect(path.relative('/a', '/a/b/c')).toEqual('./b/c');
         expect(path.relative('/a/b/c', '/a/b/d')).toEqual('./d');
-        expect(path.relative('/a/b/c', '/a/b')).toEqual('../');
+        expect(path.relative('/a/b/c', '/a/b')).toEqual('..');
     });
 });
